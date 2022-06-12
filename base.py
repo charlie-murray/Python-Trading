@@ -1,5 +1,6 @@
 import searchStock as ss
 import sortData as sd
+import pairAlgorithm as pa
 
 class Base:
     def __init__(self):
@@ -18,7 +19,8 @@ class Base:
                 ss.dateSearch(symbol)
             elif ans == "3":
                 print('\nPlot a Stock')
-                ss.plotStock(symbol)
+                symbols = [symbol]
+                pa.run_graph(symbols)
             elif ans == "4":
                 return
             else:

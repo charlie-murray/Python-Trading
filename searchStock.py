@@ -52,10 +52,6 @@ def dateSearch(symbol):
     
     except Exception as e:
         print(e)
-     
-def plotStock(symbol):
-    Value, Dates = values_dates(symbol)
-    pa.plot_chart(Value, Dates)  
         
         
 def searchStock(symbol):
