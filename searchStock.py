@@ -1,6 +1,7 @@
 from optparse import Values
 from symtable import Symbol
 from matplotlib import dates
+import pairAlgorithm as pa
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,36 +54,9 @@ def dateSearch(symbol):
         print(e)
      
 def plotStock(symbol):
-    try:
-        Value, Dates = values_dates(symbol)
+    Value, Dates = values_dates(symbol)
+    pa.plot_chart(Value, Dates)  
         
-        plotdates = []
-        floatsArr = [eval(x) for x in Value]
-        plotValues = np.array(floatsArr)
-        
-        for i in range(0, len(Dates)):
-            if (i % 125) == 0:
-                plotdates.append(Dates[i])
-        
-        maxValue = np.max(plotValues)
-        minValue = np.min(plotValues)
-        differnce = (maxValue - minValue) / 11
-        
-        sidePlots = []
-        currentValue = maxValue
-        
-
-        for i in range(0, 10):
-            sidePlots.append(currentValue)
-            currentValue -= differnce
-
-        plt.plot(Dates, Value)
-        plt.xticks(ticks=plotdates, labels=plotdates)
-        plt.yticks(ticks=sidePlots, labels=sidePlots)
-        plt.show()     
-        
-    except Exception as e:
-        print(e)
         
 def searchStock(symbol):
 
