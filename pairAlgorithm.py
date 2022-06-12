@@ -15,17 +15,10 @@ def plot_chart(value, dates):
     value = np.array(floatsArr)
     dates = np.array(dates)
 
-    #x = [dt.datetime.strptime(d,'%d/%m/%Y').date() for d in dates]
+    x = [dt.datetime.strptime(d,'%Y-%m-%d').date() for d in dates]
     
-    for val in dates:
-        print(val)
-    
-    #plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
-    #plt.gca().xaxis.set_major_locator(mdates.DayLocator())
-    
-    #plt.plot(dates, value)
-    #plt.show()
-    #plt.gcf().autofmt_xdate()
+    plt.plot(x, value)
+    plt.show()
 
 def cointegrated_pairs(symbol):
     year_value, year_dates = get_last_year(symbol)

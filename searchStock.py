@@ -36,7 +36,7 @@ def values_dates(symbol):
 def dateSearch(symbol):
     try:
         while True:
-            ans = input('\nEnter A Date [DY/MN/YEAR]: ')
+            ans = input('\nEnter A Date [YEAR-MN-DY]: ')
             
             Values, Dates = values_dates(symbol)
             
