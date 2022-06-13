@@ -20,7 +20,21 @@ class Base:
             elif ans == "3":
                 print('\nPlot a Stock')
                 symbols = [symbol]
-                pa.run_graph(symbols)
+                while True:
+                    again = input('\nWould you Like to compare with another stock? y/n: ')
+                    if again == 'y':
+                        new_stock = input('Enter Another Stock: ')
+                        symbols.append(new_stock)
+                    else:
+                        try:
+                            all_question = input('\nDo you want 1Y? y/n: ')
+                            if all_question == 'y':
+                                pa.run_graph(symbols, 'y')
+                            else:
+                                pa.run_graph(symbols, 'n')
+                        except Exception as e:
+                            print(e)
+                        break
             elif ans == "4":
                 return
             else:
