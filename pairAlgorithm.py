@@ -1,5 +1,6 @@
 from ctypes import resize
 import datetime as dt
+from itertools import combinations
 from unittest import result
 import searchStock as ss
 import pandas as pd
@@ -51,26 +52,29 @@ def get_last_year(symbol):
     year_value = value[-252:]
     return year_value, year_dates
 
-def cointegrated_calculator(file):
+
+
+def get_prices(stocks):
     start = '2020-12-31'
     end = '2022-03-08'
+    
+    data = pd.DataFrame()
+    
+    for stock in stocks:
+        prices = yf.download(stock, start, end)
+        data[stock] = prices['Close']
+        
+    return data
+
+def cointegrated_calculator(file):
     
     all_stocks = []
     
     with open(file, newline='') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
-        i = 0
-        for row in spamreader:
-            if i != 0:
-                strSplit = row[0].split(',')
-                all_stocks.append(strSplit[0])
-            i += 1 
-    
-    data = pd.DataFrame()
-    
-    for stock in all_stocks:
-        prices = yf.download(stock, start, end)
-        data[stock] = prices['Close']
+        for row in spamreader: all_stocks.append(row)
+
+    data = get_prices(all_stocks)
     
     p_values = pd.DataFrame()
     
@@ -80,38 +84,23 @@ def cointegrated_calculator(file):
             if i != j:
                 result = adfuller(data[i] - data[j])
                 p_col.append(result[1])
-            else:
-                p_col.append(0.0)
+            else: p_col.append(0.0)
         p_values[i] = p_col
     
     p_values.to_csv('p_value.csv', index = False, header=True)
 
 def calculate_signals(stocks):
     
-    start = '2020-12-31'
-    end = '2022-03-08'
-    
     strSplit = stocks.split(',')
     stock = [strSplit[0], strSplit[1]]
-    p_value = strSplit[2]
     
-    stock_frame = pd.DataFrame()
+    stock_frame = get_prices(stock)
     
-    for s in stock:
-        prices = yf.download(s, start, end)
-        stock_frame[s] = prices['Close']
-        
-    ratio_stock = pd.DataFrame()
-
-    for i in range(0, len(stock_frame.index)):
-        stock_values = []
-        for symbol in stock_frame:
-            stock_values.append(stock_frame.loc[i][symbol])
-        ratio_stock.append({'ratios':stock_values[0]/stock_values[1]})
+    stock_frame = stock_frame.join(pd.concat([stock_frame[a].div(stock_frame[b]).
+                        rename(f'{a}/{b}') for a, b in combinations(stock_frame.columns, 2)], 1))
     
-    plt.plot(ratio_stock)
+    plt.plot(stock_frame.index, stock_frame['CDNS/VRSK'])
     plt.show()
-
     
 def calculate_pairs(file):
     
@@ -126,8 +115,7 @@ def calculate_pairs(file):
                 stock_row = p_values[p_values[stock] == p].index[0]
                 y_stock = p_values.columns[stock_row]
                 test_stock = y_stock + "," + stock
-                if test_stock not in tradeable:
-                    tradeable.append(stock + "," + y_stock + "," + str(p))
+                if test_stock not in tradeable: tradeable.append(stock + "," + y_stock + "," + str(p))
     
     best_pair(tradeable)
 
@@ -138,8 +126,7 @@ def best_pair(stocks):
     for stock in stocks:
         option1 = stock.split(',')
         option2 = best_stock.split(',')
-        if float(option1[2]) < float(option2[2]):
-            best_stock = stock
+        if float(option1[2]) < float(option2[2]): best_stock = stock
     
     calculate_signals(best_stock)
 

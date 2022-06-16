@@ -52,7 +52,7 @@ class Base:
                 self.searchStock()
             elif ans == "3":
                 print("\n\nPairs Algorithm\n")
-                sd.loaderFunction()
+                pa.calculate_pairs('p_value.csv')
                 
             elif ans == "4":
                 break
